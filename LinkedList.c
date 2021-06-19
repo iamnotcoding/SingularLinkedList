@@ -39,6 +39,8 @@ void DestoryList(LinkedList **list)
       free((*list)->head);
    }
 
+   free(*list);
+   
    *list = NULL;
 }
 
