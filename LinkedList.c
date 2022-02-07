@@ -1,6 +1,5 @@
 /* environment : c version >= 99, doesn't support c++ */
 
-#include <assert.h> //optional
 #include <stdio.h>
 #include <stdlib.h>
 
