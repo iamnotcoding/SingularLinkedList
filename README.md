@@ -1,7 +1,7 @@
 # SingularLinkedList
-<p1> SINGULAR LIST WITH HEAD <P1>
+<h1> SINGULAR LIST WITH HEAD <h1>
 
-<p2> HOW TO BUILD : <P2>
+<h2> HOW TO BUILD : <h2>
   <br>
-  <h> make</h>
+  <p> make</p>
   
