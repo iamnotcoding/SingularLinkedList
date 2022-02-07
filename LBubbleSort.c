@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include "LBubbleSort.h"
 #include "LinkedList.h"
+#include "LBubbleSort.h"
 
 int LDataCmp(LData x, LData y)
 {

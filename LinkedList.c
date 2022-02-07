@@ -28,8 +28,8 @@ void DestoryList(LinkedList *list)
 	if (list->numOfNodes != 0)
 	{
 		LNode *prevNode, *currentNode = list->head;
-      
-      prevNode = currentNode;
+
+		prevNode = currentNode;
 
 		while (currentNode->next != NULL)
 		{
@@ -79,10 +79,10 @@ LData LDelete(LinkedList *list)
 
 	if (list->numOfNodes == 1) // if there's only head
 	{
-      toBedelNode = list->head;
+		toBedelNode = list->head;
 		returnLData = list->head->data;
 
-      list->head = NULL;
+		list->head = NULL;
 	}
 	else
 	{
