@@ -3,88 +3,76 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <assert.h>
 
+#include "LBubbleSort.h"
 #include "LinkedList.h"
 
-#define TEST_CASE_NUM 10000
-#define TEST_CASE_RANGE 1000
-
-static inline int LDataCmp(LData x, LData y)
-{
-    if (x > y)
-        return -1;
-    if (x < y)
-        return 1;
-    else
-        return 0;
-}
-static inline void LSwap(LNode *x, LNode *y)
-{
-    assert(x != NULL && y != NULL);
-
-    LData temp;
-
-    AssignLData(&temp, x->data);
-    AssignLData(&(x->data), y->data);
-    AssignLData(&(y->data), temp);
-}
-
-void LBubbleSort(LinkedList *list)
-{
-    assert(list != NULL);
-
-    if (list->head->next == NULL) // there's nothin to do XD
-        return;
-    else
-    {
-        LNode *currentNode = list->head;
-
-        for (size_t i = 0; i < list->numOfNodes; i++)
-        {
-            for (size_t j = 0; j < list->numOfNodes - i - 1; j++)
-            {
-                if (LDataCmp(currentNode->data, currentNode->next->data) > 0)
-                    LSwap(currentNode, currentNode->next);
-
-                currentNode = currentNode->next;
-            }
-
-            currentNode = list->head;
-        }
-    }
-}
+#define TEST_CASE_NUM 10U
+#define TEST_CASE_RANGE 1000U
 
 int main(void)
 {
-    clock_t start, end;
-    int temp;
-    LinkedList *list = CreateList();
+	clock_t start, end;
+	int temp;
+	LinkedList *list = CreateList();
 
-    srand((unsigned int)time(NULL));
+	if (list == NULL)
+	{
+		fprintf(stderr, "CreateList() failed!; exiting...\n");
+		return 1;
+	}
 
-    for (size_t i = 0; i < TEST_CASE_NUM; i++)
-    {
-        temp = rand() % TEST_CASE_RANGE;
-        LInsert(list, temp);
-        printf("%" PFLData " ", temp);
-    };
+	// simple example
 
-    puts("orignal data");
+	puts("insert 3");
+	LInsert(list, 3);
+	puts("insert 7");
+	LInsert(list, 7);
 
-    start = clock();
+	putchar('\n');
 
-    LBubbleSort(list);
+	printf("delete : "
+		   "%" PFLData " \n",
+		   LDelete(list));
+	printf("delete : "
+		   "%" PFLData " \n",
+		   LDelete(list));
 
-    end = clock();
-    
-     for (size_t i = 0; i < TEST_CASE_NUM; i++)
-        printf("%" PFLData " ", LDelete(list));
+	putchar('\n');
 
-    puts("sorted data");
+	srand((unsigned int)time(NULL));
 
-    printf("test case : %d\n execution time : %Lfs\n", TEST_CASE_NUM, 
-    (long double)(end - start) / CLOCKS_PER_SEC);
+	puts("orignal data : ");
 
-    DestoryList(&list);
+	// fill the list with random data
+	for (size_t i = 0; i < TEST_CASE_NUM; i++)
+	{
+		temp = rand() % TEST_CASE_RANGE;
+
+		LInsert(list, temp);
+
+		printf("%" PFLData " ", temp);
+	};
+
+	start = clock();
+
+	// sort the list
+	LBubbleSort(list);
+
+	end = clock();
+
+	putchar('\n');
+	puts("sorted data : ");
+
+	// print the result
+	for (size_t i = 0; i < TEST_CASE_NUM; i++)
+	{
+		printf("%" PFLData " ", LDelete(list));
+	}
+
+	putchar('\n');
+	printf("\ntest case number : %d\nexecution time : %Lfs\n", TEST_CASE_NUM,
+		   (long double)(end - start) / CLOCKS_PER_SEC);
+
+	DestoryList(list);
 }

@@ -1,103 +1,112 @@
 /* environment : c version >= 99, doesn't support c++ */
 
+#include <assert.h> //optional
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h> //optional
 
 #include "LinkedList.h"
 
 void AssignLData(LData *lhs, LData rhs)
 {
-   assert(lhs != NULL);
-
-   *lhs = rhs;
+	*lhs = rhs;
 }
 
 LinkedList *CreateList(void)
 {
-   LinkedList *tempList = calloc(1, sizeof(LinkedList));
+	LinkedList *tempList = calloc(1, sizeof(LinkedList));
 
-   return tempList;
+	if (tempList == NULL)
+	{
+		perror("list allocation failed! : ");
+	}
+
+	return tempList;
 }
 
-void DestoryList(LinkedList **list)
+// free all nodes and the list
+void DestoryList(LinkedList *list)
 {
-   assert(*list != NULL);
-
-   if ((*list)->numOfNodes != 0)
-   {
-      LNode *prevNode, *currentNode = (*list)->head;
-
+	if (list->numOfNodes != 0)
+	{
+		LNode *prevNode, *currentNode = list->head;
+      
       prevNode = currentNode;
 
-      while (currentNode->next != NULL)
-      {
-         currentNode = currentNode->next;
-         prevNode = currentNode;
-         free(prevNode);
-      }
-      free((*list)->head);
-   }
+		while (currentNode->next != NULL)
+		{
+			currentNode = currentNode->next;
 
-   free(*list);
-   
-   *list = NULL;
+			free(prevNode);
+
+			prevNode = currentNode;
+		}
+	}
+
+	free(list);
 }
 
-// insert at the rightmost
+// insert at the rightmost(act like push)
 void LInsert(LinkedList *list, LData data)
 {
-   assert(list != NULL);
+	LNode *newNode = malloc(sizeof(LNode));
 
-   LNode *newNode = calloc(1, sizeof(LNode));
+	AssignLData(&(newNode->data), data);
+	newNode->next = NULL;
 
-   LNode *currentNode = list->head;
+	if (list->head == NULL)
+	{
+		list->head = newNode;
+	}
+	else
+	{
+		LNode *currentNode = list->head;
 
-   AssignLData(&(newNode->data), data);
+		while (currentNode->next != NULL)
+		{
+			currentNode = currentNode->next;
+		}
 
-   if (list->head == NULL)
-      list->head = newNode;
-   else
-   {
-      while (currentNode->next)
-         currentNode = currentNode->next;
+		currentNode->next = newNode;
+	}
 
-      currentNode->next = newNode;
-   }
-
-   list->numOfNodes++;
+	list->numOfNodes++;
 }
 
-// delete the rightmost node and returns deleted node's data
+// delete the rightmost node and return deleted node's data(act like pop)
 LData LDelete(LinkedList *list)
 {
-   assert(list != NULL);
+	LNode *toBedelNode, *prevNode;
+	LData returnLData;
 
-   LNode *toBedelNode, *prevNode, *currentNode = list->head;
-   LData returnLData;
+	if (list->numOfNodes == 1) // if there's only head
+	{
+      toBedelNode = list->head;
+		returnLData = list->head->data;
 
-   if (list->numOfNodes == 0)  // if there's no node to delete
-      return list->head->data; // there's nothing needs to be done; exit
-   else
-   {
-      prevNode = currentNode;
+      list->head = NULL;
+	}
+	else
+	{
+		LNode *currentNode = list->head;
 
-      while (currentNode->next != NULL)
-      {
-         prevNode = currentNode;
-         currentNode = currentNode->next;
-      }
+		prevNode = currentNode;
 
-      toBedelNode = currentNode;
+		while (currentNode->next != NULL)
+		{
+			prevNode = currentNode;
+			currentNode = currentNode->next;
+		}
 
-      prevNode->next = NULL;
-   }
+		toBedelNode = currentNode;
 
-   returnLData = toBedelNode->data;
+		prevNode->next = NULL;
+	}
 
-   free(toBedelNode);
+	returnLData = toBedelNode->data;
 
-   list->numOfNodes--;
+	free(toBedelNode);
 
-   return returnLData;
+	list->numOfNodes--;
+
+	return returnLData;
 }
