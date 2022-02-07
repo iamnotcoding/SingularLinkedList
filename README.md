@@ -3,4 +3,4 @@
 
 <p2> HOW TO BUILD <P2>
   <br>
-  <h> make CC=gcc </h>
+  <ul> make CC=gcc </ul>
