@@ -10,6 +10,7 @@
 #define TEST_CASE_NUM 10U
 #define TEST_CASE_RANGE 1000U
 
+#if 0
 int main(void)
 {
 	clock_t start, end;
@@ -25,18 +26,18 @@ int main(void)
 	// simple example
 
 	puts("insert 3");
-	LInsert(list, 3);
+	LInsert(list, 3, -1);
 	puts("insert 7");
-	LInsert(list, 7);
+	LInsert(list, 7, -1);
 
 	putchar('\n');
 
 	printf("delete : "
-		   "%" PFLData " \n",
-		   LDelete(list));
+		   "%" "d" " \n",
+		   LDelete(list, -1));
 	printf("delete : "
-		   "%" PFLData " \n",
-		   LDelete(list));
+		   "%" "d" " \n",
+		   LDelete(list, -1));
 
 	putchar('\n');
 
@@ -51,7 +52,7 @@ int main(void)
 
 		LInsert(list, temp);
 
-		printf("%" PFLData " ", temp);
+		printf("%" "d" " ", temp);
 	};
 
 	start = clock();
@@ -67,7 +68,7 @@ int main(void)
 	// print the result
 	for (size_t i = 0; i < TEST_CASE_NUM; i++)
 	{
-		printf("%" PFLData " ", LDelete(list));
+		printf("%" "d" " ", LDelete(list));
 	}
 
 	putchar('\n');
@@ -75,4 +76,18 @@ int main(void)
 		   (long double)(end - start) / CLOCKS_PER_SEC);
 
 	DestoryList(list);
+}
+
+#endif
+
+int main(void)
+{
+	LinkedList *list = CreateList();
+	LData data = 1;
+
+	LInsert(list, &data, 0);
+	data = 2;
+	LInsert(list, &data, -1);
+
+	printf("%d\n", *LGetData(list, 1));
 }

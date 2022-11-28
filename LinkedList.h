@@ -6,10 +6,6 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
-#define PFLData "d"
-
-/* if you want to change LData, 
-you have to change AssignLData() and PFLData too(if it's printable)*/
 typedef int LData;
 
 typedef struct _node
@@ -22,15 +18,18 @@ typedef struct _node
 typedef struct _linked_list
 {
 	LNode *head;
-	size_t numOfNodes;
+	int nodeCount;
 } LinkedList;
 
 LinkedList *CreateList(void);
 void DestoryList(LinkedList *list);
 
-void LInsert(LinkedList *list, LData data);
-LData LDelete(LinkedList *list);
+void LInsert(LinkedList *list, const LData *data, int index);
 
-void AssignLData(LData *lhs, LData rhs);
+void LDeleteByIndex(LinkedList *list, int index);
+void LDeleteByData(LinkedList *list, const LData *data);
+
+int LFind(LinkedList *list, const LData *data);
+LData *LGetData(LinkedList *list, int index);
 
 #endif

@@ -2,12 +2,18 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "LinkedList.h"
 
-void AssignLData(LData *lhs, LData rhs)
+void CopyLData(LData *dest, const LData *src)
 {
-	*lhs = rhs;
+	*dest = *src;
+}
+
+bool CmpLData(const LData *x, const LData *y)
+{
+	return *x == *y;
 }
 
 LinkedList *CreateList(void)
@@ -16,7 +22,7 @@ LinkedList *CreateList(void)
 
 	if (tempList == NULL)
 	{
-		perror("list allocation failed! : ");
+		perror("CreateList() : list allocation failed! : ");
 	}
 
 	return tempList;
@@ -25,19 +31,19 @@ LinkedList *CreateList(void)
 // free all nodes and the list
 void DestoryList(LinkedList *list)
 {
-	if (list->numOfNodes != 0)
+	if (list->nodeCount != 0)
 	{
-		LNode *prevNode, *currentNode = list->head;
+		LNode *prevNode, *curNode = list->head;
 
-		prevNode = currentNode;
+		prevNode = curNode;
 
-		while (currentNode->next != NULL)
+		while (curNode->next != NULL)
 		{
-			currentNode = currentNode->next;
+			curNode = curNode->next;
 
 			free(prevNode);
 
-			prevNode = currentNode;
+			prevNode = curNode;
 		}
 	}
 
@@ -45,67 +51,182 @@ void DestoryList(LinkedList *list)
 }
 
 // insert at the rightmost(act like push)
-void LInsert(LinkedList *list, LData data)
+void LInsert(LinkedList *list, const LData *data, int index)
 {
-	LNode *newNode = malloc(sizeof(LNode));
+	LNode *newNode = malloc(sizeof *newNode);
 
-	AssignLData(&(newNode->data), data);
+	CopyLData(&(newNode->data), data);
+
 	newNode->next = NULL;
 
-	if (list->head == NULL)
+	if (index == 0)
 	{
+		newNode->next = list->head;
 		list->head = newNode;
 	}
 	else
 	{
-		LNode *currentNode = list->head;
+		LNode *curNode = list->head;
+		LNode *prevNode;
 
-		while (currentNode->next != NULL)
+		if (index == -1)
 		{
-			currentNode = currentNode->next;
+			while(curNode != NULL)
+			{
+				prevNode = curNode;
+				curNode = curNode->next;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < index; i++)
+			{
+				prevNode = curNode;
+				curNode = curNode->next;
+
+				if (curNode == NULL)
+				{
+					fprintf(stderr, "LInsert() : out of bounds!\n");
+					exit(1);
+				}
+			}
 		}
 
-		currentNode->next = newNode;
+		prevNode->next = newNode;
+		newNode->next = curNode;
 	}
 
-	list->numOfNodes++;
+	list->nodeCount++;
 }
 
 // delete the rightmost node and return deleted node's data(act like pop)
-LData LDelete(LinkedList *list)
+void LDeleteByIndex(LinkedList *list, int index)
 {
 	LNode *toBedelNode, *prevNode;
-	LData returnLData;
 
-	if (list->numOfNodes == 1) // if there's only head
+	if (index == 0) // if there's only head
 	{
+		if (list->head == NULL)
+		{
+			fprintf(stderr, "LDeleteByIndex() : the list is empty!\n");
+			exit(1);
+		}
+
 		toBedelNode = list->head;
-		returnLData = list->head->data;
 
 		list->head = NULL;
 	}
 	else
 	{
-		LNode *currentNode = list->head;
+		LNode *curNode = list->head;
+		
+		prevNode = curNode;
 
-		prevNode = currentNode;
-
-		while (currentNode->next != NULL)
+		if (index == -1)
 		{
-			prevNode = currentNode;
-			currentNode = currentNode->next;
+			while (curNode->next != NULL)
+			{
+				prevNode = curNode;
+				curNode = curNode->next;
+			}
+		}
+		else
+		{
+			for (int i = 0; i < index; i++)
+			{
+				prevNode = curNode;
+				curNode = curNode->next;
+
+				if (curNode == NULL)
+				{
+					fprintf(stderr, "LDeleteByIndex() : out of bounds!\n");
+					exit(1);
+				}
+			}
+
 		}
 
-		toBedelNode = currentNode;
+		toBedelNode = curNode;
 
 		prevNode->next = NULL;
 	}
 
-	returnLData = toBedelNode->data;
-
 	free(toBedelNode);
 
-	list->numOfNodes--;
+	list->nodeCount--;
+}
 
-	return returnLData;
+void LDeleteByData(LinkedList *list, const LData *data)
+{
+	LNode *curNode = list->head;
+	LNode *prevNode;
+
+	if (curNode == NULL)
+	{
+		fprintf(stderr, "LDeleteByIndex() : the list is empty!\n");
+		exit(1);
+	}
+
+	while (curNode != NULL && CmpLData(&(curNode->data), data) == true)
+	{
+		prevNode = curNode;
+		curNode = curNode->next;
+	}
+
+	if (curNode == NULL)
+	{
+		fprintf(stderr, "LDeleteByIndex() : out of bounds!\n");
+		exit(1);
+	}
+
+	prevNode->next = curNode->next;
+
+	free(curNode);
+}
+
+int LFind(LinkedList *list, const LData *data)
+{
+	LNode *curNode = list->head;
+	int index;
+
+	if (curNode == NULL)
+	{
+		return -1;
+	}
+
+	for (index = 0; curNode != NULL && CmpLData(&(curNode->data), data) == true; index++)
+	{
+		curNode = curNode->next;
+	}
+
+	if (curNode == NULL)
+	{
+		return -1;
+	}
+
+	return index;
+}
+
+LData *LGetData(LinkedList *list, int index)
+{
+	LNode *curNode = list->head;
+
+	if (curNode == NULL)
+	{
+		fprintf(stderr, "LGetData() : the list is empty!\n");
+		exit(1);
+	}
+
+	for (int i = 0; i < index && curNode != NULL; i++)
+	{
+		curNode = curNode->next;
+	}
+
+	if (curNode == NULL)
+	{
+		fprintf(stderr, "LGetData() : out of bounds!\n");
+		exit(1);
+	}
+
+	return &(curNode->data);
 }

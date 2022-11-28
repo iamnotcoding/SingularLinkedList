@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+#if 0
+
 #include "LinkedList.h"
 #include "LBubbleSort.h"
 
@@ -54,3 +56,4 @@ void LBubbleSort(LinkedList *list)
 		}
 	}
 }
+#endif
